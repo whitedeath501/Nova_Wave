@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ofertas da NovaWave</title>
+
+<style>
+
+:root{
+    --rosa:#FF6F91;
+    --rosa-hover:#ff4f7a;
+    --verde:#A8E6CF;
+    --claro:#FFF0F5;
+    --texto:#2D3436;
+    --fundo:#f8f9fb;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+    background:var(--fundo);
+}
+
+/* HEADER */
+
+header{
+    background:white;
+    padding:20px 30px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    box-shadow:0 3px 15px rgba(0,0,0,.08);
+    position:sticky;
+    top:0;
+    z-index:1000;
+}
+
+.logo{
+    font-size:30px;
+    font-weight:bold;
+    color:lightgreen;
+}
+
+/* MENU */
+
+nav{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:10px;
+}
+
+nav a{
+    text-decoration:none;
+    color:var(--texto);
+    padding:8px 12px;
+    border-radius:8px;
+    font-weight:bold;
+    transition:.3s;
+}
+
+nav a:hover{
+    background:rgba(255,111,145,.1);
+    color:var(--rosa);
+}
+
+/* BOTÃO SAIR */
+
+.btn-sair{
+    background:#ff4f7a;
+    color:white;
+    text-decoration:none;
+    padding:10px 18px;
+    border-radius:10px;
+    font-weight:bold;
+    transition:.3s;
+}
+
+.btn-sair:hover{
+    background:#e63e68;
+    transform:translateY(-2px);
+}
+
+/* BANNER */
+
+.banner{
+    background:linear-gradient(135deg,var(--rosa),#ff8fab);
+    color:white;
+    text-align:center;
+    padding:80px 20px;
+}
+
+.banner h1{
+    font-size:48px;
+    margin-bottom:10px;
+    color:lightgreen;
+}
+
+.banner p{
+    font-size:20px;
+    opacity:.95;
+}
+
+/* PRODUTOS */
+
+.produtos{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    max-width:1400px;
+    margin:auto;
+    padding:40px 20px;
+}
+
+.produtos h2{
+    margin-bottom:30px;
+    color:var(--texto);
+    font-size:32px;
+}
+
+.grid{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:25px;
+    width:100%;
+}
+
+/* CARDS */
+
+.card{
+    width:280px;
+    min-height:390px;
+    background:white;
+    border-radius:18px;
+    overflow:hidden;
+    text-decoration:none;
+    color:var(--texto);
+    border:3px solid transparent;
+    box-shadow:0 5px 15px rgba(0,0,0,.08);
+    transition:.35s;
+}
+
+.card:hover{
+    transform:translateY(-8px) scale(1.03);
+    border-color:var(--rosa);
+    box-shadow:0 0 25px rgba(255,111,145,.35);
+}
+
+.card img{
+    width:100%;
+    height:220px;
+    object-fit:cover;
+}
+
+.card-body{
+    padding:18px;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    height:170px;
+}
+
+.card h3{
+    text-align:center;
+    margin-bottom:10px;
+}
+
+.preco-antigo{
+    text-align:center;
+    color:#999;
+    text-decoration:line-through;
+    font-size:14px;
+}
+
+.preco{
+    text-align:center;
+    color:var(--rosa);
+    font-size:28px;
+    font-weight:bold;
+    margin:10px 0;
+}
+
+/* BOTÃO */
+
+.botao{
+    width:100%;
+    padding:12px;
+    background:var(--rosa);
+    color:white;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    font-weight:bold;
+    transition:.3s;
+}
+
+.botao:hover{
+    background:var(--rosa-hover);
+    transform:translateY(-2px);
+}
+
+/* FOOTER */
+
+footer{
+    margin-top:60px;
+    background:#2D3436;
+    color:white;
+    text-align:center;
+    padding:25px;
+}
+
+/* RESPONSIVO */
+
+@media(max-width:1000px){
+
+    header{
+        flex-direction:column;
+        gap:15px;
+        text-align:center;
+    }
+
+}
+
+@media(max-width:768px){
+
+    .banner h1{
+        font-size:34px;
+    }
+
+    .banner p{
+        font-size:16px;
+    }
+
+    .grid{
+        flex-direction:column;
+        align-items:center;
+    }
+
+    .card{
+        width:90%;
+        max-width:320px;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+
+    <div class="logo">NovaWave Ofertas</div>
+
+    <nav>
+        <a href="index.html">Início</a>
+        <a href="processadores.html">Processadores</a>
+        <a href="placas_video.html">Placas de Vídeo</a>
+        <a href="memoria.html">Memórias</a>
+        <a href="ssd.html">SSDs</a>
+        <a href="fontes.html">Fontes</a>
+        <a href="perifericos.html">Periféricos</a>
+        <a href="ofertas.html">Ofertas</a>
+        <a href="contato.html">Contato</a>
+    </nav>
+
+    <a href="Inicio.html" class="btn-sair">Sair</a>
+
+</header>
+
+<section class="banner">
+    <h1> Mega Ofertas NovaWave</h1>
+    <p>Produtos selecionados com descontos exclusivos.</p>
+</section>
+
+<section class="produtos">
+
+    <h2>Ofertas em Destaque</h2>
+
+    <div class="grid">
+
+        <div class="card">
+            <img src="https://via.placeholder.com/400x300" alt="Smartwatch">
+            <div class="card-body">
+                <h3>Smartwatch Premium</h3>
+                <div class="preco-antigo">R$ 299,90</div>
+                <div class="preco">R$ 149,90</div>
+                <button class="botao">Comprar</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="https://via.placeholder.com/400x300" alt="Fone Bluetooth">
+            <div class="card-body">
+                <h3>Fone Bluetooth</h3>
+                <div class="preco-antigo">R$ 199,90</div>
+                <div class="preco">R$ 89,90</div>
+                <button class="botao">Comprar</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="https://via.placeholder.com/400x300" alt="Caixa de Som">
+            <div class="card-body">
+                <h3>Caixa de Som</h3>
+                <div class="preco-antigo">R$ 249,90</div>
+                <div class="preco">R$ 129,90</div>
+                <button class="botao">Comprar</button>
+            </div>
+        </div>
+
+    </div>
+
+</section>
+
+<footer>
+    © 2026 NovaWave Commerce - Todos os direitos reservados
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Feedback - NovaWave</title>
+
+<style>
+:root {
+  --cor-primaria: #FFF0F5;
+  --cor-secundaria: #A8E6CF;
+  --cor-terciaria: #FF6F91;
+  --cor-texto: #2D3436;
+}
+
+body {
+  margin: 0;
+  font-family: Arial;
+  background: var(--cor-primaria);
+}
+
+/* HEADER */
+header {
+  background: white;
+  padding: 15px 30px;
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #e6e6e6;
+}
+
+.logo {
+  font-size: 20px;
+  font-weight: bold;
+  color: var(--cor-terciaria);
+}
+
+nav a {
+  margin-left: 15px;
+  text-decoration: none;
+  color: var(--cor-texto);
+  padding: 6px 10px;
+  border-radius: 6px;
+}
+
+nav a:hover {
+  background: var(--cor-secundaria);
+}
+
+/* 🔥 DROPDOWN (CORREÇÃO ESSENCIAL) */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background: white;
+  min-width: 260px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+  border-radius: 10px;
+  overflow: hidden;
+  z-index: 999;
+}
+
+.dropdown-content a {
+  display: block;
+  padding: 10px;
+}
+
+.dropdown-content a:hover {
+  background: var(--cor-secundaria);
+}
+
+/* abre no hover (sem JS bugado) */
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+/* CONTAINER */
+.container {
+  max-width: 1100px;
+  margin: auto;
+  padding: 20px;
+}
+
+.setor {
+  background: white;
+  margin-top: 25px;
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0,0,0,.08);
+}
+
+.setor h2 {
+  color: var(--cor-terciaria);
+}
+
+/* LISTA */
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+/* INPUT */
+input {
+  padding: 8px;
+  width: 60%;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+/* BOTÃO */
+button {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background: var(--cor-terciaria);
+  color: white;
+}
+
+.add {
+  margin-top: 10px;
+  background: var(--cor-secundaria);
+  color: #000;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+
+<div class="logo">NovaWave</div>
+
+<nav>
+
+  <a href="dashboard.html">Dashboard</a>
+
+  <!-- DROPDOWN SISTEMA -->
+  <div class="dropdown">
+
+    <a href="#">Sistema ▾</a>
+
+    <div class="dropdown-content">
+
+      <a href="calendario.html">📅 Calendário de Projetos, Férias e Folgas</a>
+      <a href="funcionarios.html">👥 Funcionários (Presença e Setores)</a>
+      <a href="tarefas-setor.html">🧩 Feedback Por Setor</a>
+      <a href="pendentes.html">⏳ Quadro de Tarefas Pendentes</a>
+
+    </div>
+
+  </div>
+
+  <a href="#" onclick="logout()">Sair</a>
+
+</nav>
+
+</header>
+
+<div class="container">
+
+<h1>Feedback por Setor</h1>
+
+<div id="painel"></div>
+
+</div>
+
+<script>
+
+/* =========================
+   LOGOUT (CORREÇÃO)
+========================= */
+function logout() {
+  localStorage.removeItem("logado");
+  window.location.href = "inicio.html";
+}
+
+/* =========================
+   SETORES
+========================= */
+
+const setores = {
+  marketing: "Marketing",
+  dev: "Desenvolvimento",
+  vendas: "Vendas",
+  rh: "Recursos Humanos"
+};
+
+/* =========================
+   DADOS
+========================= */
+
+function getTarefas(setor){
+return JSON.parse(localStorage.getItem("tarefas-"+setor)) || [
+"Feedback sobre campanhas internas",
+"Avaliação de processos do time",
+"Sugestão de melhoria de fluxo"
+];
+}
+
+/* SALVAR */
+function salvar(setor, lista){
+localStorage.setItem("tarefas-"+setor, JSON.stringify(lista));
+}
+
+/* ADICIONAR */
+function addTarefa(setor){
+let input = document.getElementById("input-"+setor);
+let valor = input.value.trim();
+
+if(!valor) return;
+
+let tarefas = getTarefas(setor);
+tarefas.push(valor);
+
+salvar(setor, tarefas);
+render();
+}
+
+/* REMOVER */
+function remover(setor, index){
+let tarefas = getTarefas(setor);
+tarefas.splice(index,1);
+salvar(setor, tarefas);
+render();
+}
+
+/* RENDER */
+function render(){
+
+let painel = document.getElementById("painel");
+painel.innerHTML = "";
+
+for(let key in setores){
+
+let tarefas = getTarefas(key);
+
+let html = `
+<div class="setor">
+<h2>${setores[key]}</h2>
+
+<ul>
+`;
+
+tarefas.forEach((t,i)=>{
+html += `
+<li>
+<span>${t}</span>
+<button onclick="remover('${key}',${i})">Excluir</button>
+</li>
+`;
+});
+
+html += `
+</ul>
+
+<input id="input-${key}" placeholder="Novo feedback...">
+<button class="add" onclick="addTarefa('${key}')">Adicionar</button>
+
+</div>
+`;
+
+painel.innerHTML += html;
+}
+
+}
+
+render();
+
+</script>
+
+</body>
+</html>

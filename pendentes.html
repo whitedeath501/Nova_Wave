@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Pendências - NovaWave</title>
+
+<style>
+:root {
+  --cor-primaria: #FFF0F5;
+  --cor-secundaria: #A8E6CF;
+  --cor-terciaria: #FF6F91;
+  --cor-texto: #2D3436;
+}
+
+body {
+  margin: 0;
+  font-family: Arial;
+  background: var(--cor-primaria);
+}
+
+/* HEADER */
+header {
+  background: white;
+  padding: 15px 30px;
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #e6e6e6;
+}
+
+.logo {
+  font-size: 20px;
+  font-weight: bold;
+  color: var(--cor-terciaria);
+}
+
+nav a {
+  margin-left: 15px;
+  text-decoration: none;
+  color: var(--cor-texto);
+  padding: 6px 10px;
+  border-radius: 6px;
+}
+
+nav a:hover {
+  background: var(--cor-secundaria);
+}
+
+/* 🔥 CORREÇÃO IMPORTANTE DO DROPDOWN */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background: white;
+  min-width: 260px;
+  box-shadow: 0 8px 20px rgba(0,0,0,.15);
+  border-radius: 10px;
+  z-index: 999;
+  top: 100%;
+  left: 0;
+}
+
+.dropdown-content a {
+  display: block;
+  padding: 10px;
+  text-decoration: none;
+  color: var(--cor-texto);
+}
+
+.dropdown-content a:hover {
+  background: var(--cor-secundaria);
+}
+
+/* CONTAINER */
+.container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 20px;
+}
+
+/* SETOR */
+.setor {
+  background: white;
+  margin-top: 25px;
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0,0,0,.08);
+}
+
+.setor h2 {
+  color: var(--cor-terciaria);
+}
+
+/* CARD */
+.card {
+  background: #f8f8f8;
+  padding: 10px;
+  margin: 8px 0;
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card.done {
+  background: var(--cor-secundaria);
+  text-decoration: line-through;
+}
+
+/* INPUT */
+input {
+  padding: 8px;
+  width: 70%;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  margin-top: 10px;
+}
+
+/* BOTÃO */
+button {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background: var(--cor-terciaria);
+  color: white;
+}
+
+.add {
+  background: var(--cor-secundaria);
+  color: #000;
+  margin-top: 8px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+
+<div class="logo">NovaWave</div>
+
+<nav>
+
+<a href="dashboard.html">Dashboard</a>
+
+<!-- DROPDOWN SISTEMA -->
+<div class="dropdown">
+  <a href="#" id="toggleDropdown">Sistema ▾</a>
+
+  <div class="dropdown-content">
+    <a href="calendario.html">📅 Calendário de Projetos, Férias e Folgas</a>
+    <a href="funcionarios.html">👥 Funcionários (Presença e Setores)</a>
+    <a href="tarefas-setor.html">🧩 Feedback Por Setor</a>
+    <a href="pendentes.html">⏳ Quadro de Tarefas Pendentes</a>
+  </div>
+</div>
+
+<a href="#" onclick="logout()">Sair</a>
+
+</nav>
+
+</header>
+
+<div class="container">
+
+<h1>Quadro de Pendências</h1>
+
+<div id="painel"></div>
+
+</div>
+
+<script>
+
+/* =========================
+   LOGOUT (CORREÇÃO)
+========================= */
+function logout() {
+  localStorage.removeItem("logado");
+  window.location.href = "inicio.html";
+}
+
+/* =========================
+   SETORES
+========================= */
+
+const setores = {
+  marketing: "Marketing",
+  dev: "Desenvolvimento",
+  vendas: "Vendas",
+  rh: "Recursos Humanos"
+};
+
+/* =========================
+   GET
+========================= */
+
+function getPendencias(setor){
+return JSON.parse(localStorage.getItem("pend-"+setor)) || [
+"Revisar campanhas ativas",
+"Corrigir bug no sistema",
+"Atualizar base de clientes"
+];
+}
+
+/* =========================
+   SAVE
+========================= */
+
+function save(setor, data){
+localStorage.setItem("pend-"+setor, JSON.stringify(data));
+}
+
+/* =========================
+   ADD
+========================= */
+
+function add(setor){
+let input = document.getElementById("inp-"+setor);
+let val = input.value.trim();
+
+if(!val) return;
+
+let list = getPendencias(setor);
+
+list.push({
+text: val,
+done: false
+});
+
+save(setor, list);
+render();
+}
+
+/* =========================
+   TOGGLE DONE
+========================= */
+
+function toggle(setor, index){
+
+let list = getPendencias(setor);
+
+list[index].done = !list[index].done;
+
+save(setor, list);
+
+render();
+}
+
+/* =========================
+   REMOVE
+========================= */
+
+function removeItem(setor, index){
+
+let list = getPendencias(setor);
+
+list.splice(index,1);
+
+save(setor, list);
+
+render();
+}
+
+/* =========================
+   RENDER
+========================= */
+
+function render(){
+
+let painel = document.getElementById("painel");
+painel.innerHTML = "";
+
+for(let key in setores){
+
+let list = getPendencias(key);
+
+let html = `
+<div class="setor">
+<h2>${setores[key]}</h2>
+`;
+
+list.forEach((item,i)=>{
+
+html += `
+<div class="card ${item.done ? 'done' : ''}">
+<span>${item.text}</span>
+
+<div>
+<button onclick="toggle('${key}',${i})">
+${item.done ? 'Reabrir' : 'Concluir'}
+</button>
+
+<button onclick="removeItem('${key}',${i})">X</button>
+</div>
+
+</div>
+`;
+});
+
+html += `
+<input id="inp-${key}" placeholder="Nova pendência...">
+<button class="add" onclick="add('${key}')">Adicionar</button>
+</div>
+`;
+
+painel.innerHTML += html;
+}
+
+}
+
+render();
+
+/* =========================
+   DROPDOWN (CORRIGIDO)
+========================= */
+
+document.addEventListener("DOMContentLoaded", () => {
+  const dropdown = document.querySelector(".dropdown");
+  const toggle = document.getElementById("toggleDropdown");
+  const menu = document.querySelector(".dropdown-content");
+
+  if (!dropdown || !toggle || !menu) return;
+
+  menu.style.display = "none";
+
+  toggle.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    menu.style.display =
+      menu.style.display === "block" ? "none" : "block";
+  });
+
+  document.addEventListener("click", (e) => {
+    if (!dropdown.contains(e.target)) {
+      menu.style.display = "none";
+    }
+  });
+});
+
+</script>
+
+</body>
+</html>

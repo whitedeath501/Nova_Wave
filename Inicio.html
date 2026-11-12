@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Login - NovaWave</title>
+
+<style>
+:root {
+  --cor-primaria: #FFF0F5;
+  --cor-secundaria: #A8E6CF;
+  --cor-terciaria: #FF6F91;
+  --cor-texto: #2D3436;
+}
+
+body{
+font-family:Arial;
+background:linear-gradient(135deg,var(--cor-primaria),#ffffff);
+margin:0;
+}
+
+header{
+background:white;
+color:var(--cor-texto);
+padding:15px 30px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+border-bottom:1px solid #e6e6e6;
+}
+
+header .logo{
+font-size:20px;
+font-weight:bold;
+color:var(--cor-terciaria);
+}
+
+.login-container{
+width:340px;
+margin:120px auto;
+padding:35px;
+background:white;
+text-align:center;
+border-radius:16px;
+border:2px solid var(--cor-secundaria);
+box-shadow:0 10px 30px rgba(0,0,0,0.08);
+}
+
+.login-container h2{
+color:var(--cor-terciaria);
+}
+
+input{
+width:100%;
+margin:10px 0;
+padding:12px;
+border:2px solid var(--cor-secundaria);
+border-radius:10px;
+outline:none;
+transition:0.2s;
+box-sizing:border-box;
+}
+
+input:focus{
+border-color:var(--cor-terciaria);
+box-shadow:0 0 8px rgba(255,111,145,0.3);
+}
+
+button{
+width:100%;
+margin-top:10px;
+padding:12px;
+background:var(--cor-terciaria);
+color:white;
+border:none;
+border-radius:10px;
+cursor:pointer;
+font-weight:bold;
+transition:0.2s;
+}
+
+button:hover{
+background:#ff4f7a;
+transform:translateY(-2px);
+}
+
+footer{
+background:#2D3436;
+color:white;
+text-align:center;
+padding:15px;
+position:fixed;
+bottom:0;
+width:100%;
+}
+</style>
+
+</head>
+<body>
+
+<header>
+<div class="logo">NovaWave</div>
+</header>
+
+<div style="display:flex;gap:30px;justify-content:center;flex-wrap:wrap;margin-top:80px;">
+
+    <!-- LOGIN ADMIN -->
+    <div class="login-container">
+        <h2>Administrador</h2>
+
+        <form onsubmit="loginAdmin(event)">
+            <input type="email" id="emailAdmin" placeholder="Email" required>
+            <input type="password" id="senhaAdmin" placeholder="Senha" required>
+            <button type="submit">Entrar como Admin</button>
+        </form>
+    </div>
+
+    <!-- LOGIN CLIENTE -->
+    <div class="login-container">
+        <h2>Cliente</h2>
+
+        <form onsubmit="loginCliente(event)">
+            <input type="text" id="cpfCliente" placeholder="CPF" required>
+            <input type="password" id="senhaCliente" placeholder="Senha" required>
+            <button type="submit">Entrar como Cliente</button>
+        </form>
+    </div>
+
+</div>
+
+<footer>
+<p>© 2026 NovaWave Commerce - Desenvolvido por Leonardo Tarifa - Todos os direitos reservados</p>
+</footer>
+
+<script>
+
+function loginAdmin(event){
+    event.preventDefault();
+
+    const email = document.getElementById("emailAdmin").value;
+    const senha = document.getElementById("senhaAdmin").value;
+
+    if(email === "lucas@novawave.com" && senha === "123"){
+
+        localStorage.setItem("logado","true");
+        localStorage.setItem("tipoUsuario","admin");
+        localStorage.setItem("nomeUsuario","Lucas");
+
+        window.location.href = "dashboard.html";
+
+    }else{
+        alert("Login de administrador inválido.");
+    }
+}
+
+function loginCliente(event){
+    event.preventDefault();
+
+    const cpf = document.getElementById("cpfCliente").value;
+
+    if(validarCPF(cpf)){
+
+        localStorage.setItem("logado","true");
+        localStorage.setItem("tipoUsuario","usuario");
+        localStorage.setItem("nomeUsuario","Cliente");
+
+        window.location.href = "ofertas.html";
+
+    }else{
+        alert("CPF inválido.");
+    }
+}
+
+function validarCPF(cpf){
+
+    cpf = cpf.replace(/\D/g,'');
+
+    if(cpf.length !== 11) return false;
+
+    if(/^(\d)\1+$/.test(cpf)) return false;
+
+    let soma = 0;
+    let resto;
+
+    for(let i = 1; i <= 9; i++){
+        soma += parseInt(cpf.substring(i-1,i)) * (11-i);
+    }
+
+    resto = (soma * 10) % 11;
+
+    if(resto === 10 || resto === 11){
+        resto = 0;
+    }
+
+    if(resto !== parseInt(cpf.substring(9,10))){
+        return false;
+    }
+
+    soma = 0;
+
+    for(let i = 1; i <= 10; i++){
+        soma += parseInt(cpf.substring(i-1,i)) * (12-i);
+    }
+
+    resto = (soma * 10) % 11;
+
+    if(resto === 10 || resto === 11){
+        resto = 0;
+    }
+
+    return resto === parseInt(cpf.substring(10,11));
+}
+
+</script>
+</body>
+</html>

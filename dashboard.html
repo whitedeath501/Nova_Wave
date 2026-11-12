@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard - NovaWave</title>
+
+<style>
+:root {
+  --cor-primaria: #FFF0F5;
+  --cor-secundaria: #A8E6CF;
+  --cor-terciaria: #FF6F91;
+  --cor-texto: #2D3436;
+}
+
+/* BASE */
+body {
+  margin: 0;
+  font-family: Arial;
+  background: var(--cor-primaria);
+}
+
+/* HEADER */
+header {
+  background: white;
+  padding: 15px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e6e6e6;
+}
+
+.logo {
+  font-size: 20px;
+  font-weight: bold;
+  color: var(--cor-terciaria);
+}
+
+/* NAVBAR */
+nav {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+nav a {
+  text-decoration: none;
+  color: var(--cor-texto);
+  font-weight: 500;
+  padding: 6px 10px;
+  border-radius: 6px;
+}
+
+nav a:hover {
+  background: var(--cor-secundaria);
+}
+
+/* DROPDOWN */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background: white;
+  min-width: 180px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  border-radius: 8px;
+  z-index: 10;
+}
+
+.dropdown-content a {
+  display: block;
+  padding: 10px;
+}
+
+.dropdown-content a:hover {
+  background: var(--cor-primaria);
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+/* CONTEÚDO */
+.container {
+  max-width: 900px;
+  margin: 50px auto;
+  padding: 20px;
+}
+
+h1 {
+  color: var(--cor-terciaria);
+}
+
+p {
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--cor-texto);
+}
+
+/* FOOTER */
+footer {
+  background: #2D3436;
+  color: white;
+  text-align: center;
+  padding: 15px;
+  margin-top: 60px;
+}
+</style>
+
+</head>
+
+<body onload="verificarLogin()">
+
+<header>
+
+  <div class="logo">NovaWave</div>
+
+  <nav>
+
+    <a href="dashboard.html">Dashboard</a>
+
+    <!-- DROPDOWN SISTEMA -->
+   <div class="dropdown">
+  <a href="#">Sistema ▾</a>
+
+  <div class="dropdown-content">
+
+    <a href="calendario.html">
+      📅 Calendário de Projetos, Férias e Folgas
+    </a>
+
+    <a href="funcionarios.html">
+      👥 Funcionários (Presença e Setores)
+    </a>
+
+    <a href="tarefas-setor.html">
+      🧩 Feedback Por Setor
+    </a>
+
+    <a href="pendentes.html">
+      ⏳ Quadro de Tarefas Pendentes
+    </a>
+
+  </div>
+</div>
+
+    <a href="#" onclick="logout()">Sair</a>
+
+  </nav>
+
+</header>
+
+<!-- CONTEÚDO -->
+<div class="container">
+
+  <h1>Bem-vindo ao sistema NovaWave</h1>
+
+  <p>
+    Este é um protótipo de um sistema interno de gestão empresarial para uma empresa fictícia de e-commerce.
+    Ele simula a estrutura de um sistema real utilizado por empresas para organizar setores, usuários, cargos,
+    projetos e tarefas.
+  </p>
+
+  <p>
+    O objetivo deste projeto é demonstrar como um sistema corporativo pode ser estruturado de forma modular,
+    escalável e com separação de responsabilidades entre diferentes áreas da empresa.
+  </p>
+
+  <p>
+    Utilize o menu superior para acessar as funcionalidades disponíveis no sistema, como gestão de usuários,
+    controle de projetos e acompanhamento de tarefas.
+  </p>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  © 2026 NovaWave Commerce - Desenvolvido por Leonardo Tarifa - Todos os direitos reservados
+</footer>
+
+<script>
+function verificarLogin() {
+  const logado = localStorage.getItem("logado");
+  if (logado !== "true") {
+    window.location.href = "inicio.html";
+  }
+}
+
+/* 🔥 ALTERAÇÃO ÚNICA: logout agora sempre volta para login */
+function logout() {
+  localStorage.removeItem("logado");
+  window.location.href = "inicio.html";
+}
+</script>
+
+</body>
+</html>

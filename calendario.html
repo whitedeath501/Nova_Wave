@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Calendário - NovaWave</title>
+
+<style>
+:root {
+  --cor-primaria: #FFF0F5;
+  --cor-secundaria: #A8E6CF;
+  --cor-terciaria: #FF6F91;
+  --cor-texto: #2D3436;
+}
+
+body {
+  margin: 0;
+  font-family: Arial;
+  background: var(--cor-primaria);
+}
+
+/* HEADER */
+header {
+  background: white;
+  padding: 15px 30px;
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #e6e6e6;
+}
+
+.logo {
+  font-size: 20px;
+  font-weight: bold;
+  color: var(--cor-terciaria);
+}
+
+nav a {
+  margin-left: 15px;
+  text-decoration: none;
+  color: var(--cor-texto);
+  padding: 6px 10px;
+  border-radius: 6px;
+}
+
+nav a:hover {
+  background: var(--cor-secundaria);
+}
+
+/* DROPDOWN */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background: white;
+  min-width: 260px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+  border-radius: 10px;
+  overflow: hidden;
+  z-index: 999;
+}
+
+.dropdown-content a {
+  display: block;
+  padding: 10px;
+  text-decoration: none;
+}
+
+.dropdown-content a:hover {
+  background: var(--cor-secundaria);
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+/* CONTAINER */
+.container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 20px;
+}
+
+.box {
+  background: white;
+  padding: 25px;
+  border-radius: 20px;
+  margin-top: 30px;
+  box-shadow: 0 8px 20px rgba(0,0,0,.08);
+}
+
+/* CALENDÁRIO */
+.calendario {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(120px, 1fr));
+  gap: 10px;
+}
+
+.dia {
+  background: #f7f7f7;
+  border: 1px solid #ddd;
+  padding: 10px;
+  border-radius: 12px;
+  min-height: 130px;
+}
+
+.topo {
+  background: var(--cor-secundaria);
+  font-weight: bold;
+  text-align: center;
+}
+
+textarea {
+  width: 100%;
+  height: 60px;
+  resize: none;
+  border-radius: 8px;
+  border: 1px solid #999;
+  padding: 5px;
+}
+
+/* BOTÕES */
+button {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: var(--cor-terciaria);
+  color: white;
+}
+
+.btn-danger {
+  background: #ff4f4f;
+  color: white;
+}
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<div class="logo">NovaWave</div>
+
+<nav>
+
+<a href="dashboard.html">Dashboard</a>
+
+<div class="dropdown">
+
+  <a href="#">Sistema ▾</a>
+
+  <div class="dropdown-content">
+
+    <a href="calendario.html">📅 Calendário de Projetos, Férias e Folgas</a>
+    <a href="funcionarios.html">👥 Funcionários (Presença e Setores)</a>
+    <a href="tarefas-setor.html">🧩 Feedback Por Setor</a>
+    <a href="pendentes.html">⏳ Quadro de Tarefas Pendentes</a>
+
+  </div>
+
+</div>
+
+<!-- 🔥 ALTERAÇÃO ÚNICA AQUI -->
+<a href="#" onclick="logout()">Sair</a>
+
+</nav>
+
+</header>
+
+<div class="container">
+
+<div class="box">
+<h2>Agenda Mensal de Projetos</h2>
+
+<select id="mes">
+<option>Janeiro</option>
+<option>Fevereiro</option>
+<option>Março</option>
+<option>Abril</option>
+<option>Maio</option>
+<option>Junho</option>
+<option>Julho</option>
+<option>Agosto</option>
+<option>Setembro</option>
+<option>Outubro</option>
+<option>Novembro</option>
+<option>Dezembro</option>
+</select>
+
+<br><br>
+
+<button onclick="gerarAgenda()" class="btn-primary">Carregar Calendário</button>
+<button onclick="resetarAgenda()" class="btn-danger">Resetar</button>
+
+<br><br>
+
+<div id="calendario" class="calendario"></div>
+</div>
+
+</div>
+
+<script>
+
+/* =========================
+   EVENTOS FIXOS (EMPRESA)
+========================= */
+
+const eventos = {
+  "Janeiro-5": "Planejamento Q1",
+  "Janeiro-12": "Kickoff Projeto Site Novo",
+  "Janeiro-20": "Sprint E-commerce"
+};
+
+/* =========================
+   GERAR CALENDÁRIO
+========================= */
+
+function gerarAgenda(){
+
+let mesIndex = document.getElementById("mes").selectedIndex;
+let mesNome = document.getElementById("mes").value;
+let ano = new Date().getFullYear();
+
+let diasMes = new Date(ano, mesIndex + 1, 0).getDate();
+let primeiroDia = new Date(ano, mesIndex, 1).getDay();
+
+let c = document.getElementById("calendario");
+c.innerHTML = "";
+
+let semana = ["Dom","Seg","Ter","Qua","Qui","Sex","Sab"];
+
+for(let d of semana){
+  c.innerHTML += `<div class='dia topo'>${d}</div>`;
+}
+
+for(let i=0;i<primeiroDia;i++){
+  c.innerHTML += `<div class='dia'></div>`;
+}
+
+for(let i=1;i<=diasMes;i++){
+
+let chave = mesNome + "-" + i;
+
+let valorSalvo = localStorage.getItem(chave);
+let valorPadrao = eventos[chave];
+
+let valor = valorSalvo;
+
+if(!valor && valorPadrao){
+  valor = "📌 " + valorPadrao;
+}
+
+c.innerHTML += `
+<div class='dia'>
+<strong>Dia ${i}</strong>
+<textarea onchange="salvar('${chave}',this.value)">${valor}</textarea>
+</div>`;
+}
+}
+
+/* =========================
+   SALVAR
+========================= */
+
+function salvar(chave,valor){
+localStorage.setItem(chave,valor);
+}
+
+/* =========================
+   RESET
+========================= */
+
+function resetarAgenda(){
+
+if(prompt("Senha:") === "123"){
+
+let mes = document.getElementById("mes").value;
+
+for(let i=1;i<=31;i++){
+localStorage.removeItem(mes+"-"+i);
+}
+
+gerarAgenda();
+
+}else{
+alert("Senha incorreta");
+}
+}
+
+/* 🔥 LOGOUT CORRIGIDO */
+function logout(){
+localStorage.removeItem("logado");
+window.location.href = "inicio.html";
+}
+
+/* INIT */
+gerarAgenda();
+
+</script>
+
+</body>
+</html>

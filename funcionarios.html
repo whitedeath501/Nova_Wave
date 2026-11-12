@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Frequência - NovaWave</title>
+
+<style>
+:root {
+  --cor-primaria: #FFF0F5;
+  --cor-secundaria: #A8E6CF;
+  --cor-terciaria: #FF6F91;
+  --cor-texto: #2D3436;
+}
+
+body {
+  margin: 0;
+  font-family: Arial;
+  background: var(--cor-primaria);
+}
+
+/* HEADER */
+header {
+  background: white;
+  padding: 15px 30px;
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #e6e6e6;
+}
+
+.logo {
+  font-size: 20px;
+  font-weight: bold;
+  color: var(--cor-terciaria);
+}
+
+nav a {
+  margin-left: 15px;
+  text-decoration: none;
+  color: var(--cor-texto);
+  padding: 6px 10px;
+  border-radius: 6px;
+}
+
+nav a:hover {
+  background: var(--cor-secundaria);
+}
+
+/* 🔥 DROPDOWN (FALTAVA ISSO) */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background: white;
+  min-width: 260px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+  border-radius: 10px;
+  overflow: hidden;
+  z-index: 999;
+}
+
+.dropdown-content a {
+  display: block;
+  padding: 10px;
+}
+
+.dropdown-content a:hover {
+  background: var(--cor-secundaria);
+}
+
+/* abre no hover (mais estável que JS) */
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+/* CONTAINER */
+.box {
+  background: white;
+  margin: 20px;
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0,0,0,.08);
+}
+
+/* BOTÕES */
+button {
+  padding: 10px 12px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-right: 5px;
+}
+
+.btn-primary { background: var(--cor-terciaria); color: white; }
+.btn-success { background: var(--cor-secundaria); }
+.btn-warning { background: #ffd166; }
+.btn-danger  { background: #ff5c5c; color: white; }
+
+/* TABELA */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+th {
+  background: var(--cor-secundaria);
+  padding: 10px;
+}
+
+td {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  text-align: center;
+}
+
+input[type="checkbox"] {
+  transform: scale(1.2);
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<div class="logo">NovaWave</div>
+
+  <nav>
+
+    <a href="dashboard.html">Dashboard</a>
+
+    <!-- DROPDOWN SISTEMA -->
+    <div class="dropdown">
+
+      <a href="#">Sistema ▾</a>
+
+      <div class="dropdown-content">
+
+        <a href="calendario.html">📅 Calendário de Projetos, Férias e Folgas</a>
+        <a href="funcionarios.html">👥 Funcionários (Presença e Setores)</a>
+        <a href="tarefas-setor.html">🧩 Feedback Por Setor</a>
+        <a href="pendentes.html">⏳ Quadro de Tarefas Pendentes</a>
+
+      </div>
+
+    </div>
+
+    <a href="#" onclick="logout()">Sair</a>
+
+  </nav>
+
+</header>
+
+<div class="box">
+
+<h2>Lista de Frequência por Setor</h2>
+
+<select id="turma" onchange="carregar()">
+
+<option value="marketing">Marketing</option>
+<option value="dev">Desenvolvimento</option>
+<option value="vendas">Vendas</option>
+<option value="rh">Recursos Humanos</option>
+
+</select>
+
+<br><br>
+
+<button class="btn-warning" onclick="editar()">Editar Lista</button>
+<button class="btn-success" onclick="salvar()">Salvar Lista</button>
+<button class="btn-primary" onclick="chamada()">Registrar Presença</button>
+<button class="btn-danger" onclick="resetar()">Resetar</button>
+
+<br><br>
+
+<div id="lista"></div>
+
+</div>
+
+<script>
+
+const senha = "novawave123";
+
+let modo = false;
+let alunosTemp = [];
+
+/* SEGURANÇA */
+function getUsuario(){
+return JSON.parse(localStorage.getItem("usuarioLogado"));
+}
+
+function verificar(){
+if(getUsuario()?.tipo !== "professor"){
+alert("Apenas administrador pode usar");
+return false;
+}
+return true;
+}
+
+/* CARREGAR */
+function carregar(){
+
+let t = document.getElementById("turma").value;
+
+let funcionarios = JSON.parse(localStorage.getItem("func-"+t)) || Array(40).fill("");
+
+let pres = JSON.parse(localStorage.getItem("pres-"+t)) || [];
+
+let html = `
+<table>
+<tr>
+<th>#</th>
+<th>Nome</th>
+<th>Frequência</th>
+<th>Hoje</th>
+</tr>
+`;
+
+funcionarios.forEach((nome,i)=>{
+
+let total = pres.length;
+let faltas = 0;
+
+pres.forEach(d=>{
+if(!d[i]) faltas++;
+});
+
+let freq = total ? Math.round(100 - ((faltas/total)*100)) : 100;
+
+html += `<tr>`;
+
+html += `<td>${i+1}</td>`;
+
+if(modo && getUsuario()?.tipo === "professor"){
+html += `<td contenteditable oninput="alunosTemp[${i}] = this.innerText">${nome}</td>`;
+}else{
+html += `<td>${nome}</td>`;
+}
+
+html += `<td>${freq}%</td>`;
+html += `<td><input type="checkbox" id="c${i}"></td>`;
+
+html += `</tr>`;
+});
+
+html += `</table>`;
+
+document.getElementById("lista").innerHTML = html;
+}
+
+/* EDITAR */
+function editar(){
+
+if(!verificar()) return;
+
+if(prompt("Senha:") === senha){
+
+modo = true;
+
+let t = document.getElementById("turma").value;
+alunosTemp = JSON.parse(localStorage.getItem("func-"+t)) || Array(40).fill("");
+
+carregar();
+
+}else{
+alert("Senha incorreta");
+}
+}
+
+/* SALVAR */
+function salvar(){
+
+if(!verificar()) return;
+
+let t = document.getElementById("turma").value;
+
+localStorage.setItem("func-"+t, JSON.stringify(alunosTemp));
+
+modo = false;
+
+carregar();
+
+alert("Lista salva!");
+}
+
+/* PRESENÇA */
+function chamada(){
+
+if(!verificar()) return;
+
+if(prompt("Senha:") !== senha){
+alert("Senha incorreta");
+return;
+}
+
+let t = document.getElementById("turma").value;
+
+let pres = JSON.parse(localStorage.getItem("pres-"+t)) || [];
+
+let hoje = [];
+
+for(let i=0;i<40;i++){
+hoje.push(document.getElementById("c"+i).checked);
+}
+
+pres.push(hoje);
+
+localStorage.setItem("pres-"+t, JSON.stringify(pres));
+
+alert("Presença registrada!");
+
+carregar();
+}
+
+/* RESET */
+function resetar(){
+
+if(!verificar()) return;
+
+if(prompt("Senha:") !== senha){
+alert("Senha incorreta");
+return;
+}
+
+let t = document.getElementById("turma").value;
+
+localStorage.removeItem("pres-"+t);
+
+carregar();
+}
+
+/* LOGOUT (CORREÇÃO) */
+function logout() {
+  localStorage.removeItem("logado");
+  window.location.href = "inicio.html";
+}
+
+/* INIT */
+carregar();
+
+</script>
+
+</body>
+</html>
